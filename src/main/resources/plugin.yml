@@ -1,0 +1,6 @@
+name: FairPvP
+main: me.preciouso.fairpvp.FairPvp
+version: 1.0.0
+author: Kyu
+api-version: 1.18
+depend: [WorldGuard]
