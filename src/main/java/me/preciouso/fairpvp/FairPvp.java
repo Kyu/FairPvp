@@ -3,21 +3,25 @@ package me.preciouso.fairpvp;
 import me.preciouso.fairpvp.Listeners.PlayerPvpListener;
 import me.preciouso.fairpvp.Utils.PlayerPair;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class FairPvp extends JavaPlugin {
     private PlayerPair pvpPlayers;
+    Configuration config;
 
     @Override
     public void onEnable() {
+        this.saveDefaultConfig();
+        config = new Configuration(this.getConfig());
+
         pvpPlayers = new PlayerPair();
 
         getServer().getPluginManager().registerEvents(new PlayerPvpListener(this), this);
         
         new ClearPvp(this).runTaskTimer(this, 0, 20);
+
     }
 
 
@@ -50,5 +54,9 @@ public class FairPvp extends JavaPlugin {
 
     public HashMap<UUID, Long> getHits() {
         return pvpPlayers.getAllHits();
+    }
+
+    public Configuration getPluginConfig() {
+        return this.config;
     }
 }

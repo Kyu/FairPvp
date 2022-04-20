@@ -21,17 +21,6 @@ import java.util.UUID;
 
 public class PlayerPvpListener implements Listener {
     FairPvp plugin;
-    private final ArrayList<Material> ARMOR_TYPES = new ArrayList<>(
-            Arrays.asList(
-                    Material.NETHERITE_BOOTS, Material.NETHERITE_LEGGINGS, Material.NETHERITE_CHESTPLATE, Material.NETHERITE_HELMET,
-                    Material.DIAMOND_BOOTS, Material.DIAMOND_LEGGINGS, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_HELMET,
-                    Material.IRON_BOOTS, Material.IRON_LEGGINGS, Material.IRON_CHESTPLATE, Material.IRON_HELMET,
-                    Material.GOLDEN_BOOTS, Material.GOLDEN_LEGGINGS, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_HELMET,
-                    Material.LEATHER_BOOTS, Material.LEATHER_LEGGINGS, Material.LEATHER_CHESTPLATE, Material.LEATHER_HELMET,
-                    Material.CHAINMAIL_BOOTS, Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_CHESTPLATE, Material.CHAINMAIL_HELMET,
-                    Material.TURTLE_HELMET
-            )
-    );
 
     public PlayerPvpListener(FairPvp plugin) {
         this.plugin = plugin;
@@ -72,8 +61,10 @@ public class PlayerPvpListener implements Listener {
                 // WorldGuard.getInstance().getPlatform().getSessionManager().
                 if (canPvp) {
                     plugin.addPvpPair(hitter.getUniqueId(), partner.getUniqueId());
-                    hitter.sendMessage("You have now entered PvP mode with " + partner.getDisplayName());
-                    partner.sendMessage(hitter.getDisplayName() + " has now tagged you! You have entered PvP mode");
+                    hitter.sendMessage("You have now entered PvP mode with " + partner.getDisplayName() + " for " +
+                            plugin.getPluginConfig().getPvpTagTime() + " seconds");
+                    partner.sendMessage(hitter.getDisplayName() + " has now tagged you for " +
+                            plugin.getPluginConfig().getPvpTagTime() + " seconds ! You have entered PvP mode");
                     // e.setCancelled(false); -- unneeded
                 } else {
                     e.setCancelled(true);
@@ -81,6 +72,11 @@ public class PlayerPvpListener implements Listener {
             }
         } else {
             e.setCancelled(false);
+            /*
+            TODO
+            Both players can only PvP when both players hit each other atleast once
+            Check for this in getLastHit
+             */
             Long last = plugin.getLastHit(partner.getUniqueId());
             if (last != null) {
                 double diff = ((double) System.currentTimeMillis() - (double) last)/1000;
@@ -94,7 +90,7 @@ public class PlayerPvpListener implements Listener {
     @EventHandler
     public void onArmorDamageEvent(PlayerItemDamageEvent e) {
         if (plugin.inPvp(e.getPlayer().getUniqueId())) {
-            e.setCancelled(ARMOR_TYPES.contains(e.getItem().getType()));
+            e.setCancelled(true);
         }
     }
 }
