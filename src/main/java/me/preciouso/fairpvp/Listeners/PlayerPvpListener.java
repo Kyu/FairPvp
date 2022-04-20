@@ -1,6 +1,5 @@
 package me.preciouso.fairpvp.Listeners;
 
-import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;

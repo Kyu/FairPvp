@@ -4,4 +4,4 @@ Enables Pvp in Worldguard Pvp allowed regions. Also in regions where a pvper is 
 
 Spigot 1.18.2, requires WorldGuard(and WorldEdit) to work.  
 
-No as of yet
+No config as of yet

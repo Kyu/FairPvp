@@ -1,6 +1,5 @@
 package me.preciouso.fairpvp;
 
-import me.preciouso.fairpvp.Utils.PlayerMessager;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Iterator;

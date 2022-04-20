@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class FairPvp extends JavaPlugin {
-    // TODO timer to remove from pvp after 60 seconds
     private PlayerPair pvpPlayers;
 
     @Override
@@ -17,8 +16,7 @@ public class FairPvp extends JavaPlugin {
         pvpPlayers = new PlayerPair();
 
         getServer().getPluginManager().registerEvents(new PlayerPvpListener(this), this);
-
-        BukkitScheduler scheduler = getServer().getScheduler();
+        
         new ClearPvp(this).runTaskTimer(this, 0, 20);
     }
 

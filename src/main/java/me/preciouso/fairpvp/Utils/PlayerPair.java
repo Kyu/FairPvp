@@ -1,7 +1,5 @@
 package me.preciouso.fairpvp.Utils;
 
-import org.bukkit.entity.Player;
-
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -59,7 +57,7 @@ public class PlayerPair {
         lastHit.remove(invertedMap.get(key));
          */
 
-        PlayerMessager pm = new PlayerMessager();
+        PlayerMessenger pm = new PlayerMessenger();
         UUID key1;
         UUID key2;
         if (map.containsKey(key)) {
