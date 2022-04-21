@@ -22,7 +22,9 @@ public class ClearPvp extends BukkitRunnable {
 
         while (iter.hasNext()) {
             Map.Entry<UUID, Long> entry = iter.next();
-            if (now - entry.getValue() > 10 * 1000) { // 10 secs
+            // 20 ticks x 1000 ms x n secs
+            // Buggy if time is low
+            if (now - entry.getValue() > 1000 * plugin.getPluginConfig().getPvpTagTime() ) {
                 plugin.removeFromPvp(entry.getKey());
                 iter.remove();
             }

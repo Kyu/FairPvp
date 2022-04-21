@@ -9,10 +9,11 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import me.preciouso.fairpvp.FairPvp;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.UUID;
 
 public class PlayerPvpListener implements Listener {
     FairPvp plugin;
-
+	
     public PlayerPvpListener(FairPvp plugin) {
         this.plugin = plugin;
     }
@@ -29,7 +30,13 @@ public class PlayerPvpListener implements Listener {
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
         // If entities aren't Players
-        if (!(e.getEntity() instanceof Player partner && e.getDamager() instanceof Player hitter)) {
+        Entity damager  = e.getDamager();
+        if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
+            Projectile pr = (Projectile) e.getDamager();
+            damager = (Entity) pr.getShooter();
+        }
+
+        if (!(e.getEntity() instanceof Player partner && damager instanceof Player hitter)) {
             return;
         }
 
@@ -38,10 +45,10 @@ public class PlayerPvpListener implements Listener {
         UUID potential_partner_id = plugin.getPvpPartnerID(hitter.getUniqueId());
 
         // If hitter and hitee aren't partners
-        if (! (potential_partner_id != null && potential_partner_id == partner.getUniqueId())) {
+        if (! (potential_partner_id != null && potential_partner_id.equals(partner.getUniqueId()))) {
             // If hitter is in pvp or if hitee is in pvp
             if (plugin.inPvp(hitter.getUniqueId()) && plugin.inPvp(partner.getUniqueId())) {
-                Bukkit.broadcastMessage(hitter.getDisplayName() + " in pvp: " + plugin.inPvp(hitter.getUniqueId()) + " || " + partner.getDisplayName() + " in pvp: " + plugin.inPvp(partner.getUniqueId()));
+                // Bukkit.broadcastMessage(hitter.getDisplayName() + " in pvp: " + plugin.inPvp(hitter.getUniqueId()) + " || " + partner.getDisplayName() + " in pvp: " + plugin.inPvp(partner.getUniqueId()));
                 e.setCancelled(true);
             } else { // If neither are in pvp
                 // Check with worldguard if hitter is allowed to pvp
@@ -58,6 +65,8 @@ public class PlayerPvpListener implements Listener {
                     // Test if player can build or pvp
                     canPvp = query.testState(localPlayerPartner.getLocation(), localPlayerHitter, Flags.PVP, Flags.BUILD);
                 }
+
+
                 // WorldGuard.getInstance().getPlatform().getSessionManager().
                 if (canPvp) {
                     plugin.addPvpPair(hitter.getUniqueId(), partner.getUniqueId());
@@ -65,8 +74,9 @@ public class PlayerPvpListener implements Listener {
                             plugin.getPluginConfig().getPvpTagTime() + " seconds");
                     partner.sendMessage(hitter.getDisplayName() + " has now tagged you for " +
                             plugin.getPluginConfig().getPvpTagTime() + " seconds ! You have entered PvP mode");
-                    // e.setCancelled(false); -- unneeded
+                    e.setCancelled(false);
                 } else {
+                    // Bukkit.broadcastMessage("CANT PVP");
                     e.setCancelled(true);
                 }
             }
@@ -77,11 +87,14 @@ public class PlayerPvpListener implements Listener {
             Both players can only PvP when both players hit each other atleast once
             Check for this in getLastHit
              */
+            /*
             Long last = plugin.getLastHit(partner.getUniqueId());
             if (last != null) {
                 double diff = ((double) System.currentTimeMillis() - (double) last)/1000;
-                // hitter.sendMessage(diff + " seconds since you and " + partner.getDisplayName() + " last pvped!");
+                hitter.sendMessage(diff + " seconds since you and " + partner.getDisplayName() + " last pvped!");
+                partner.sendMessage(diff + " seconds since you and " + hitter.getDisplayName() + " last pvped!");
             }
+             */
 
             plugin.updateHit(potential_partner_id, System.currentTimeMillis());
         }
